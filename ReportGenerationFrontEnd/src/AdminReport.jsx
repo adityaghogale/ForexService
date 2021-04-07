@@ -2,13 +2,17 @@ import React, { PureComponent } from 'react';
 import { PieChart,Pie,Tooltip } from 'recharts';
 import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend} from 'recharts';
 
+
  class AdminReport extends PureComponent {
      constructor(){
          super();
          this.state={
            data:[],
            month:'',
-           year:''
+           year:'',
+           frequentUserName:'',
+           mostUsedSenderCurr:'',
+           mostUsedReceiverCurr:''
          }
          this.handleSelectChange=this.handleSelectChange.bind(this);
      }
@@ -46,10 +50,36 @@ import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend} from 'recharts';
       const response = await apiCall.json();
       console.log(response);
       this.setState({
-        data:response
+      
       }
       )
-      
+     }
+
+     getFrequentUser=async(event)=>{
+      const apiCall=await fetch(`http://localhost:8002/getMostFrequentUser`);
+      const response = await apiCall.json();
+      console.log(response);
+      this.setState({
+        frequentUserName:response.entityName
+      })
+     }
+
+     getMostUsedSenderCurrency=async(event)=>{
+      const apiCall=await fetch(`http://localhost:8002/getMostUsedSenderCurrency`);
+      const response = await apiCall.json();
+      console.log(response);
+      this.setState({
+        mostUsedSenderCurr:response.entityName
+      })
+     }
+
+     getMostUsedReceiverCurrency=async(event)=>{
+      const apiCall=await fetch(`http://localhost:8002/getMostUsedReceiverCurrency`);
+      const response = await apiCall.json();
+      console.log(response);
+      this.setState({
+        mostUsedReceiverCurr:response.entityName
+      })
      }
     
   render() {
@@ -116,7 +146,22 @@ import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend} from 'recharts';
                 </select>
                 <button type="submit">Get</button>
                 </form>
-        <input type="date" onChange={this.handleDateChange}></input>
+        <input type="date" onChange={this.handleDateChange}></input><br></br>
+        <br/>
+        <div className="App">
+        <div style={{height:'auto',width:300,borderStyle:'groove'}}>
+        <input type="button" className="button" onClick={this.getFrequentUser} value="Most Frequent User"></input>
+        <h2>Most Frequent user is <br/>{this.state.frequentUserName}</h2>
+        </div>
+        <div style={{height:'auto',width:300,borderStyle:'groove'}}>
+        <input type="button" className="button" onClick={this.getMostUsedSenderCurrency} value="Most used currency to send money"></input>
+        <h2>Most used currency to send money is {this.state.mostUsedSenderCurr}</h2>
+        </div>
+        <div style={{height:'auto',width:300,borderStyle:'groove'}}>
+        <input type="button" className="button" onClick={this.getMostUsedReceiverCurrency} value="Most used currency to receive money"></input>
+        <h2>Most used currency to receive money {this.state.mostUsedReceiverCurr}</h2>
+        </div>
+        </div>
         </div>
     </div>
     );
